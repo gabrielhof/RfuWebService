@@ -21,7 +21,7 @@ public class WebServiceInterface {
 				result = rs.getInt(1);
 			}
 			
-			closeResult(stm);
+			closeStatement(stm);
 			
 			return result;
 		} catch (RuntimeException e) {
@@ -52,7 +52,7 @@ public class WebServiceInterface {
 		}
 	}
 	
-	public void closeResult(PreparedStatement stm) {
+	public void closeStatement(PreparedStatement stm) {
 		try {
 			stm.close();
 		} catch (Exception e) {
