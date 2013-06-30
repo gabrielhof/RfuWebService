@@ -7,19 +7,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import br.feevale.rfu.model.Prato;
 import br.feevale.rfu.model.Tarefa;
+import br.feevale.rfu.model.list.Tarefas;
 import br.feevale.rfu.service.TarefaService;
 
-@WebService
+@Path("Tarefa")
+@Produces(MediaType.APPLICATION_XML)
 public class TarefaWebService extends WebServiceInterface implements TarefaService {
 
+	@POST
+	@Path("save")
+	@Consumes(MediaType.APPLICATION_XML)
 	@Override
-	@WebMethod
-	public void save(@WebParam(name="tarefa") Tarefa tarefa) {
+	public void save(Tarefa tarefa) {
 		List<Object> parameters = new ArrayList<Object>();
 		StringBuilder query = new StringBuilder();
 		
@@ -46,29 +53,32 @@ public class TarefaWebService extends WebServiceInterface implements TarefaServi
 		}
 	}
 
+	@POST
+	@Path("listAll")
 	@Override
-	@WebMethod
-	public Tarefa[] listAll() {
+	public Tarefas listAll() {
 		try {
 			PreparedStatement stm = executeQuery("SELECT * FROM Tarefas");
 			ResultSet rs = stm.getResultSet();
 			
-			List<Tarefa> tarefas = new ArrayList<Tarefa>();
+			Tarefas tarefas = new Tarefas();
 			while (rs.next()) {
 				tarefas.add(createTarefa(rs));
 			}
 			
 			closeStatement(stm);
 			
-			return tarefas.toArray(new Tarefa[tarefas.size()]);
+			return tarefas;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	@POST
+	@Path("getTarefas")
+	@Consumes(MediaType.APPLICATION_XML)
 	@Override
-	@WebMethod
-	public Tarefa[] getTarefas(Prato prato) {
+	public Tarefas getTarefas(Prato prato) {
 		try {
 			List<Object> parameters = new ArrayList<Object>();
 			
@@ -80,14 +90,14 @@ public class TarefaWebService extends WebServiceInterface implements TarefaServi
 			PreparedStatement stm = executeQuery(query.toString(), parameters);
 			ResultSet rs = stm.getResultSet();
 			
-			List<Tarefa> tarefas = new ArrayList<Tarefa>();
+			Tarefas tarefas = new Tarefas();
 			while (rs.next()) {
 				tarefas.add(createTarefa(rs));
 			}
 			
 			closeStatement(stm);
 			
-			return tarefas.toArray(new Tarefa[tarefas.size()]);
+			return tarefas;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

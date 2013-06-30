@@ -5,11 +5,23 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import br.feevale.rfu.model.Prato;
+import br.feevale.rfu.model.list.Pratos;
 import br.feevale.rfu.service.PratoService;
 
+@Path("/Prato")
+@Produces(MediaType.APPLICATION_XML)
 public class PratoWebService extends WebServiceInterface implements PratoService {
 
+	@POST
+	@Path("save")
+	@Consumes(MediaType.APPLICATION_XML)
 	@Override
 	public void save(Prato prato) {
 		List<Object> parameters = new ArrayList<Object>();
@@ -41,20 +53,22 @@ public class PratoWebService extends WebServiceInterface implements PratoService
 		}
 	}
 
+	@POST
+	@Path("listAll")
 	@Override
-	public Prato[] listAll() {
+	public Pratos listAll() {
 		try {
 			PreparedStatement stm = executeQuery("SELECT * FROM Prato");
 			ResultSet rs = stm.getResultSet();
 			
-			List<Prato> pratos = new ArrayList<Prato>();
+			Pratos pratos = new Pratos();
 			while (rs.next()) {
 				pratos.add(createPrato(rs));
 			}
 			
 			closeStatement(stm);
 			
-			return pratos.toArray(new Prato[pratos.size()]);
+			return pratos;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

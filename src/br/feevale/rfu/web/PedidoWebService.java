@@ -6,19 +6,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import br.feevale.rfu.model.Pedido;
+import br.feevale.rfu.model.list.Pedidos;
 import br.feevale.rfu.service.PedidoService;
 
-@WebService
+@Path("/Pedido")
 public class PedidoWebService extends WebServiceInterface implements PedidoService {
 
+	@POST
+	@Path("save")
+	@Consumes(MediaType.APPLICATION_XML)
 	@Override
-	@WebMethod
-	public void save(@WebParam(name="pedido") Pedido pedido) {
+	public void save(Pedido pedido) {
 		List<Object> parameters = new ArrayList<Object>();
 		StringBuilder query = new StringBuilder();
 		
@@ -45,27 +50,29 @@ public class PedidoWebService extends WebServiceInterface implements PedidoServi
 		}
 	}
 
+	@POST
+	@Path("listAll")
+	@Consumes(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_XML)
 	@Override
-	@WebMethod
-	public Pedido[] listAll() {
+	public Pedidos listAll() {
 		try {
 			PreparedStatement stm = executeQuery("SELECT * FROM Pedido");
 			ResultSet rs = stm.getResultSet();
 			
-			List<Pedido> pedidos = new ArrayList<Pedido>();
+			Pedidos pedidos = new Pedidos();
 			while (rs.next()) {
 				pedidos.add(createPedido(rs));
 			}
 			
 			closeStatement(stm);
 			
-			return pedidos.toArray(new Pedido[pedidos.size()]);
+			return pedidos;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
-	@WebMethod(exclude=true)
 	public Pedido createPedido(ResultSet rs) throws SQLException {
 		Pedido pedido = new Pedido();
 		pedido.setIdPedido(rs.getInt("idPedido"));

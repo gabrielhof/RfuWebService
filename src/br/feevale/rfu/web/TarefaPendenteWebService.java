@@ -3,19 +3,25 @@ package br.feevale.rfu.web;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import br.feevale.rfu.model.TarefasPendente;
+import br.feevale.rfu.model.list.TarefasPendentes;
 import br.feevale.rfu.service.TarefaPendenteService;
 
-@WebService
+@Path("/TarefaPendente")
+@Produces(MediaType.APPLICATION_XML)
 public class TarefaPendenteWebService extends WebServiceInterface implements TarefaPendenteService {
 
+	@POST
+	@Path("save")
+	@Consumes(MediaType.APPLICATION_XML)
 	@Override
-	@WebMethod
-	public void save(@WebParam(name="tarefaPendente") TarefasPendente tarefaPendente) {
+	public void save(TarefasPendente tarefaPendente) {
 		List<Object> parameters = new ArrayList<Object>();
 		StringBuilder query = new StringBuilder();
 		
@@ -46,9 +52,10 @@ public class TarefaPendenteWebService extends WebServiceInterface implements Tar
 		}
 	}
 
+	@POST
+	@Path("listAll")
 	@Override
-	@WebMethod
-	public TarefasPendente[] listAll() {
+	public TarefasPendentes listAll() {
 		return null;
 	}
 
